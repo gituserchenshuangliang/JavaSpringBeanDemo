@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 加载属性文件 -->
+<!--    <context:property-placeholder location="classpath:config/db.properties" ignore-resource-not-found="true"/>
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="locations">
+            <array>
+                &lt;!&ndash; 加载多个属性文件 &ndash;&gt;
+                <value>classpath:config/db.properties</value>
+                <value>classpath:config/db.properties</value>
+            </array>
+        </property>
+        <property name="ignoreResourceNotFound" value="true"/>
+    </bean>-->
+
+    <bean id="datasource" class="com.spring.pojo.DbInfo">
+        <property name="driverName" value="com.mysql.jdbc.Driver"/>
+        <property name="uri" value="jdbc:mysql://localhost:3306/chen?serverTimezone=UTC&amp;useSSL=false"/>
+        <property name="username" value="chen"/>
+        <property name="password" value="chen"/>
+    </bean>
+    <bean id="dbManager" class="com.spring.util.DbManager" init-method="init" destroy-method="destroy">
+        <property name="name" value="Cherry"/>
+        <property name="datasource" ref="datasource"/>
+    </bean>
+
+    <!-- 同一Bean配置多个实例-->
+    <bean id="logInfo1" class="com.spring.pojo.LogInfo">
+        <!-- 通过构造函数构造实例 -->
+        <constructor-arg index="0" value="1"/>
+        <constructor-arg index="1" value="喋喋不休"/>
+        <constructor-arg index="2" value="2020-7-1"/>
+    </bean>
+    <bean id="logInfo2" class="com.spring.pojo.LogInfo">
+        <constructor-arg index="0" value="2"/>
+        <constructor-arg index="1" value="熙熙攘攘"/>
+        <constructor-arg index="2" value="2020-7-2"/>
+    </bean>
+    <bean id="logInfo3" class="com.spring.pojo.LogInfo">
+        <constructor-arg index="0" value="3"/>
+        <constructor-arg index="1" value="言不及义"/>
+        <constructor-arg index="2" value="2020-7-3"/>
+    </bean>
+
+    <!-- 复杂Bean的装配实例 -->
+    <bean id="beanDemo" class="com.spring.pojo.SpringBeanConfigDemo">
+        <!-- int属性装配 -->
+        <property name="id" value="1"/>
+        <!-- List<String>属性装配 -->
+        <property name="list">
+            <list>
+                <value type="java.lang.String">按部就班</value>
+                <value type="java.lang.String">按图索骥</value>
+                <value type="java.lang.String">安步当车</value>
+            </list>
+        </property>
+        <!-- List<Bean>属性装配 -->
+        <property name="logList">
+            <list>
+                <ref bean="logInfo1"/>
+                <ref bean="logInfo2"/>
+                <ref bean="logInfo3"/>
+            </list>
+        </property>
+        <!-- Map<String,Bean>属性装配 -->
+        <property name="map">
+            <map>
+                <entry key="keyA" value-ref="datasource"/>
+                <entry key="keyB" value-ref="datasource"/>
+            </map>
+        </property>
+        <!-- Properties 属性装配-->
+        <property name="prop">
+            <props>
+                <prop key="a">A</prop>
+                <prop key="b">B</prop>
+                <prop key="c">C</prop>
+            </props>
+        </property>
+        <!-- Set 集合装配-->
+        <property name="set">
+            <set>
+                <value>Cherry</value>
+                <value>ChiMey</value>
+                <value>Chen</value>
+            </set>
+        </property>
+        <!-- 数组装配 -->
+        <property name="array">
+            <array>
+                <value>A-Cherry</value>
+                <value>B-ChiMey</value>
+                <value>C-Chen</value>
+            </array>
+        </property>
+    </bean>
+
+    <!-- 使用命名空间-->
+    <util:list id="li">
+            <ref bean="logInfo1"/>
+            <ref bean="logInfo2"/>
+            <ref bean="logInfo3"/>
+    </util:list>
+    <!-- p属性，c构造函数-->
+    <bean id="beanDemo2" class="com.spring.pojo.SpringBeanConfigDemo" p:logList-ref="li"/>
+</beans>
